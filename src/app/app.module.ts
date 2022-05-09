@@ -1,21 +1,22 @@
-import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 
 import { AppComponent } from './app.component';
-import {FormsModule} from "@angular/forms";
-import {ServerComponent} from "./server/server.component";
-import { ServersComponent } from './servers/servers.component';
+import { AccountComponent } from './account/account.component';
+import { NewAccountComponent } from './new-account/new-account.component';
 
 @NgModule({
   declarations: [
-    ServerComponent,
     AppComponent,
-    ServersComponent
+    AccountComponent,
+    NewAccountComponent
   ],
-    imports: [
-        BrowserModule,
-        FormsModule
-    ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
