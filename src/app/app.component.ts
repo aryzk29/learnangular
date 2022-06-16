@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {map} from "rxjs";
+import {Post} from "./post.model";
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class AppComponent implements OnInit {
     this.onFetchPosts();
   }
 
-  onCreatePost(postData: { title: string; content: string }) {
+  onCreatePost(postData: Post) {
     // Send Http request
     this.http.post('https://learnangular-91a6c-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json', postData)
       .subscribe(responseData => {
@@ -26,8 +27,8 @@ export class AppComponent implements OnInit {
 
   onFetchPosts() {
     this.http.get('https://learnangular-91a6c-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json')
-      .pipe(map(responseData => {
-        const postsArray = [];
+      .pipe(map((responseData: {[key: string]: Post}) => {
+        const postsArray: Post[] = [];
         for (const key in responseData) {
           if (responseData.hasOwnProperty(key)) {
             postsArray.push({...responseData[key], id: key})
@@ -36,7 +37,7 @@ export class AppComponent implements OnInit {
         return postsArray;
       }))
       .subscribe(posts => {
-        console.log(posts);
+        this.loadedPosts = posts;
       })
     // Send Http request
   }
