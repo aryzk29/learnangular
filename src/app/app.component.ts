@@ -10,6 +10,7 @@ import {Post} from "./post.model";
 })
 export class AppComponent implements OnInit {
   loadedPosts = [];
+  isLoading = false;
 
   constructor(private http: HttpClient) {}
 
@@ -26,6 +27,7 @@ export class AppComponent implements OnInit {
   }
 
   onFetchPosts() {
+    this.isLoading = true;
     this.http.get('https://learnangular-91a6c-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json')
       .pipe(map((responseData: {[key: string]: Post}) => {
         const postsArray: Post[] = [];
@@ -37,6 +39,7 @@ export class AppComponent implements OnInit {
         return postsArray;
       }))
       .subscribe(posts => {
+        this.isLoading = false;
         this.loadedPosts = posts;
       })
     // Send Http request
