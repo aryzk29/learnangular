@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {map} from "rxjs";
 import {Post} from "./post.model";
+import {PostsService} from "./posts.service";
 
 @Component({
   selector: 'app-root',
@@ -12,36 +13,24 @@ export class AppComponent implements OnInit {
   loadedPosts = [];
   isLoading = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+              private postService: PostsService) {}
 
   ngOnInit() {
     this.onFetchPosts();
   }
 
   onCreatePost(postData: Post) {
-    // Send Http request
-    this.http.post('https://learnangular-91a6c-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json', postData)
-      .subscribe(responseData => {
-        console.log(responseData);
-      })
+    this.postService.createAndStorePost(postData.title, postData.content);
+
   }
 
   onFetchPosts() {
     this.isLoading = true;
-    this.http.get('https://learnangular-91a6c-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json')
-      .pipe(map((responseData: {[key: string]: Post}) => {
-        const postsArray: Post[] = [];
-        for (const key in responseData) {
-          if (responseData.hasOwnProperty(key)) {
-            postsArray.push({...responseData[key], id: key})
-          }
-        }
-        return postsArray;
-      }))
-      .subscribe(posts => {
-        this.isLoading = false;
-        this.loadedPosts = posts;
-      })
+    this.postService.fetchPosts().subscribe(post => {
+      this.isLoading = false;
+      this.loadedPosts = post;
+    });
     // Send Http request
   }
 
