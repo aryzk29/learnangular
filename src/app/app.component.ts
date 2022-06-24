@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {map} from "rxjs";
+import {map, Subscription} from "rxjs";
 import {Post} from "./post.model";
 import {PostsService} from "./posts.service";
 import {error} from "@angular/compiler/src/util";
@@ -10,15 +10,20 @@ import {error} from "@angular/compiler/src/util";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   loadedPosts = [];
   isLoading = false;
   error = null;
+  private errorSubs: Subscription;
 
   constructor(private http: HttpClient,
               private postService: PostsService) {}
 
   ngOnInit() {
+    this.errorSubs =  this.postService.error.subscribe(errorMessage => {
+      this.error = errorMessage
+    })
+
     this.onFetchPosts();
   }
 
@@ -41,5 +46,9 @@ export class AppComponent implements OnInit {
     this.postService.deletePosts().subscribe(() => {
       this.loadedPosts = [];
     });
+  }
+
+  ngOnDestroy() {
+    this.errorSubs.unsubscribe();
   }
 }
