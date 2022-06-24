@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import {map} from "rxjs";
 import {Post} from "./post.model";
 import {PostsService} from "./posts.service";
+import {error} from "@angular/compiler/src/util";
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ import {PostsService} from "./posts.service";
 export class AppComponent implements OnInit {
   loadedPosts = [];
   isLoading = false;
+  error = null;
 
   constructor(private http: HttpClient,
               private postService: PostsService) {}
@@ -30,8 +32,9 @@ export class AppComponent implements OnInit {
     this.postService.fetchPosts().subscribe(post => {
       this.isLoading = false;
       this.loadedPosts = post;
+    }, error => {
+      this.error = error.message;
     });
-    // Send Http request
   }
 
   onClearPosts() {
