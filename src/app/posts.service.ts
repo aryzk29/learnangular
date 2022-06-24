@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpEventType, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Post} from "./post.model";
-import {catchError, map, Subject, throwError} from "rxjs";
+import {catchError, map, Subject, tap, throwError} from "rxjs";
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
@@ -12,9 +12,12 @@ export class PostsService {
 
   createAndStorePost(title: string, content: string){
     const postData: Post = {title: title, content: content};
-    this.http.post('https://learnangular-91a6c-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json', postData)
+    this.http.post('https://learnangular-91a6c-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json', postData,
+      {
+        observe : 'response'
+      })
       .subscribe(responseData => {
-        console.log(responseData);
+        console.log(responseData.body);
       }, error => {
         this.error.next(error.message)
       })
@@ -45,6 +48,15 @@ export class PostsService {
   }
 
   deletePosts() {
-    return this.http.delete('https://learnangular-91a6c-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json');
+    return this.http.delete('https://learnangular-91a6c-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json',
+      {
+        observe: 'events'
+      }).pipe(tap(event => {
+        console.log(event);
+
+        if(event.type === HttpEventType.Response){
+          console.log(event.body)
+        }
+    }));
   }
 }
