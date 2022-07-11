@@ -26,10 +26,7 @@ import {AuthModule} from "./auth/auth.module";
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
-    RecipesModule,
-    ShoppingListModule,
-    SharedModule,
-    AuthModule
+    SharedModule
   ],
   providers: [ShoppingListService, RecipeService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi:true}],
   bootstrap: [AppComponent]
